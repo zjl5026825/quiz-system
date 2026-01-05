@@ -1,32 +1,37 @@
-// 每次更新 index.html 逻辑后，都要把 v1 改成 v2, v3...
-const CACHE_NAME = 'quiz-v2026-0105'; 
+const CACHE_NAME = 'quiz-pro-v' + new Date().getTime(); // 使用时间戳作为缓存名
 const ASSETS = [
-  './index.html',
-  './question_data.js',
-  './manifest.json'
+    './',
+    './index.html',
+    './manifest.json'
 ];
 
-// 安装时：强制跳过等待，立即激活新版本
-self.addEventListener('install', (e) => {
-  self.skipWaiting(); 
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
+// 安装：缓存文件
+self.addEventListener('install', e => {
+    self.skipWaiting(); // 强制跳过等待，直接进入激活状态
+    e.waitUntil(
+        caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+    );
 });
 
-// 激活时：清理掉旧版本的缓存
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      );
-    })
-  );
+// 激活：清理所有旧版本的缓存
+self.addEventListener('activate', e => {
+    e.waitUntil(
+        caches.keys().then(keys => {
+            return Promise.all(
+                keys.map(key => {
+                    if (key !== CACHE_NAME) {
+                        console.log('正在清理旧缓存:', key);
+                        return caches.delete(key);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
-  );
+// 请求拦截
+self.addEventListener('fetch', e => {
+    e.respondWith(
+        caches.match(e.request).then(res => res || fetch(e.request))
+    );
 });
