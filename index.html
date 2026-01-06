@@ -1,135 +1,239 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title>智学题库 V2026.01.05.1830</title>
+    <title>智学题库 Pro - V2026.01.05</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-
     <style>
-        :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #3b82f6; --border: #e2e8f0; }
-        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
-        .sync-check { background: #ef4444; color: white; font-size: 10px; text-align: center; padding: 4px; font-weight: bold; }
-        .nav { display: flex; justify-content: space-between; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
-        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-        .option { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; cursor: pointer; }
-        #mg-panel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 300px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; z-index: 200; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
-        .panel-open #mg-panel { display: block; }
-        .btn { padding: 8px 16px; border-radius: 6px; border: none; background: var(--primary); color: white; cursor: pointer; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
+        :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #3b82f6; --success: #10b981; --error: #ef4444; --border: #e2e8f0; --sub: #64748b; }
+        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --primary: #60a5fa; --border: #334155; }
+        * { box-sizing: border-box; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; }
+        
+        /* 同步状态条 */
+        .sync-bar { background: #1e293b; color: #94a3b8; font-size: 10px; text-align: center; padding: 4px; border-bottom: 1px solid var(--border); }
+        
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 600px; margin: 0 auto; padding: 15px; }
+        
+        /* 题库卡片 */
+        .card { background: var(--card); padding: 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 10px; }
+        .q-meta { font-size: 12px; color: var(--sub); margin-bottom: 10px; display: flex; justify-content: space-between; }
+        .q-text { font-size: 18px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; }
+        
+        /* 选项样式 */
+        .option { display: flex; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
+        .option.correct { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.05); }
+        .option.wrong { border-color: var(--error); color: var(--error); background: rgba(239, 68, 68, 0.05); }
+        .option.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+        
+        /* 管理面板 */
+        #mg-panel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 100%; max-width: 320px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; z-index: 200; box-shadow: -5px 0 20px rgba(0,0,0,0.2); overflow-y: auto; }
+        .panel-on #mg-panel { display: block; }
+        
+        .btn { padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 14px; background: var(--primary); color: white; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 15px; z-index: 100; }
+        .search-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); margin-bottom: 15px; outline: none; }
+        
+        .bank-item { padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .bank-item.active { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
     </style>
 </head>
 <body>
 
-<div class="sync-check">
-    当前运行版本：2026-01-05 18:30 | 实时模式
+<div class="sync-bar">
+    当前版本: 2026.01.05.2250 (实时拉取模式)
 </div>
 
 <div class="nav">
-    <b onclick="location.reload(true)">智学题库 PRO</b>
-    <button class="btn" onclick="document.body.classList.toggle('panel-open')">管理</button>
+    <div style="font-weight: 900; font-size: 1.1rem;" onclick="location.reload()">智学题库 PRO</div>
+    <div style="display: flex; gap: 10px;">
+        <span onclick="toggleTheme()" style="cursor:pointer; font-size: 20px;">🌓</span>
+        <button class="btn btn-ghost" onclick="togglePanel()">管理</button>
+    </div>
 </div>
 
 <div id="mg-panel">
-    <h3>题库管理</h3>
-    <button class="btn" style="width:100%" onclick="addBank()">+ 新建题库</button>
-    <div id="b-list" style="margin: 15px 0;"></div>
-    <input type="file" id="up" accept=".docx" style="display:none" onchange="handleFile(this)">
-    <button class="btn" style="width:100%; background:#64748b" onclick="document.getElementById('up').click()">导入 Word (.docx)</button>
-    <br><br>
-    <button class="btn" style="width:100%; background:#ef4444" onclick="clearAllData()">⚠️ 重置所有数据</button>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+        <h3 style="margin:0">题库管理</h3>
+        <button class="btn btn-ghost" onclick="togglePanel()">关闭</button>
+    </div>
+    
+    <button class="btn" style="width:100%; margin-bottom:15px" onclick="createBank()">+ 新建题库</button>
+    <div id="bank-list"></div>
+    
+    <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
+    
+    <h4>导入数据 (.txt / .json)</h4>
+    <input type="file" id="file-up" accept=".txt,.json,.js" style="display:none" onchange="importData(this)">
+    <button class="btn btn-ghost" style="width:100%" onclick="document.getElementById('file-up').click()">选择文件</button>
+    
+    <div style="margin-top: 30px;">
+        <button class="btn btn-ghost" style="width:100%; color: var(--error); border-color: var(--error);" onclick="resetEverything()">⚠️ 清空所有本地缓存</button>
+    </div>
 </div>
 
 <div class="container">
-    <div class="card" id="q-box">请点击“管理”->“新建题库”并导入 Docx 文件</div>
+    <input type="text" id="search" class="search-input" placeholder="全局搜索题目关键词..." oninput="doSearch()">
+    
+    <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px;">
+        <button class="btn btn-ghost" id="mistake-btn" onclick="toggleMistake()" style="border-color:var(--error); color:var(--error)">错题本 (<span id="w-count">0</span>)</button>
+    </div>
+
+    <div class="card" id="quiz-box">
+        <div id="quiz-content">请进入“管理”新建并选择题库。</div>
+    </div>
 </div>
 
 <div class="footer">
-    <button class="btn" style="background:#64748b" onclick="move(-1)">上一题</button>
-    <button class="btn" style="flex:1" onclick="move(1)">下一题</button>
+    <button class="btn btn-ghost" style="width: 100px" onclick="move(-1)">上一题</button>
+    <button class="btn" style="flex: 1" onclick="move(1)">下一题</button>
 </div>
 
-<script>
-    /* 核心功能实现 */
-    let db, curBank = null, pool = [], idx = 0;
-    const request = indexedDB.open('QuizProSystem', 3);
-    request.onupgradeneeded = e => { e.target.result.createObjectStore('banks', {keyPath:'id', autoIncrement:true}); };
-    request.onsuccess = e => { db = e.target.result; loadInitial(); };
 
-    function loadInitial() {
-        refreshList();
-        const id = localStorage.getItem('last_id');
-        if (id) switchBank(parseInt(id));
+
+<script>
+    /* 核心持久化逻辑 */
+    let db, curBank = null, pool = [], idx = 0, keyword = '', isMistake = false;
+
+    // 初始化 IndexedDB
+    const req = indexedDB.open('QuizProSystem', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('banks', {keyPath: 'id', autoIncrement: true});
+    req.onsuccess = e => { db = e.target.result; boot(); };
+
+    async function boot() {
+        renderBanks();
+        const lastId = localStorage.getItem('last_bank_id');
+        if (lastId) loadBank(parseInt(lastId));
     }
 
-    function refreshList() {
+    // 题库管理
+    function renderBanks() {
         const tx = db.transaction('banks', 'readonly');
         tx.objectStore('banks').getAll().onsuccess = e => {
-            document.getElementById('b-list').innerHTML = e.target.result.map(b => `
-                <div style="padding:8px; border:1px solid var(--border); margin-top:5px; border-radius:5px; cursor:pointer;" onclick="switchBank(${b.id})">
-                    ${b.name} (${b.qs.length})
+            const banks = e.target.result;
+            document.getElementById('bank-list').innerHTML = banks.map(b => `
+                <div class="bank-item ${curBank?.id === b.id ? 'active' : ''}" onclick="loadBank(${b.id})">
+                    <span>${b.name} (${b.qs.length})</span>
+                    <span style="color:var(--error)" onclick="deleteBank(event, ${b.id})">🗑️</span>
                 </div>
             `).join('');
         };
     }
 
-    function switchBank(id) {
+    function loadBank(id) {
         db.transaction('banks', 'readonly').objectStore('banks').get(id).onsuccess = e => {
             curBank = e.target.result;
-            if(!curBank) return;
+            if (!curBank) return;
             localStorage.setItem('last_id', id);
-            pool = curBank.qs; idx = 0;
-            render();
-            refreshList();
+            isMistake = false;
+            updatePool();
+            renderBanks();
         };
     }
 
-    function render() {
-        const box = document.getElementById('q-box');
-        if(!pool.length) return;
+    function updatePool() {
+        if (!curBank) return;
+        let base = isMistake ? curBank.qs.filter(q => curBank.wrongs.includes(q.id)) : curBank.qs;
+        if (keyword) base = base.filter(q => q.question.toLowerCase().includes(keyword.toLowerCase()));
+        pool = base; idx = 0;
+        document.getElementById('w-count').innerText = curBank.wrongs.length;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        const box = document.getElementById('quiz-content');
+        if (!pool.length) { box.innerHTML = `<center style="padding:40px; color:var(--sub)">没有题目</center>`; return; }
+        
         const q = pool[idx];
+        const done = q.uAns !== undefined;
         let opts = q.options || [];
-        if(q.type === 'judge' && !opts.length) opts = [{label:'A', content:'对'}, {label:'B', content:'错'}]; //
+        // 判断题补全选项
+        if (q.type === 'judge' && !opts.length) opts = [{label:'A', content:'对'}, {label:'B', content:'错'}];
 
         box.innerHTML = `
-            <div style="font-size:12px; color:#64748b">${idx+1}/${pool.length} | ${q.type}</div>
-            <div style="font-size:18px; font-weight:bold; margin-top:10px">${q.question}</div>
-            <div style="margin-top:15px">${opts.map(o => `<div class="option" onclick="alert('答案是：'+'${q.answer}')">${o.label}. ${o.content}</div>`).join('')}</div>
+            <div class="q-meta"><span>${idx+1}/${pool.length} | ${q.type}</span></div>
+            <div class="q-text">${q.question.replace(new RegExp(`(${keyword})`, 'gi'), '<mark>$1</mark>')}</div>
+            <div>
+                ${opts.map(o => {
+                    let cls = '';
+                    if (done) {
+                        const isR = Array.isArray(q.answer) ? q.answer.includes(o.label) : q.answer === o.label;
+                        const isS = Array.isArray(q.uAns) ? q.uAns.includes(o.label) : q.uAns === o.label;
+                        if(isR) cls = 'correct'; else if(isS) cls = 'wrong';
+                    }
+                    return `<div class="option ${cls}" onclick="handleAns('${o.label}')">${o.label}. ${o.content}</div>`;
+                }).join('')}
+            </div>
+            ${done ? `<div style="margin-top:20px; font-size:14px; color:var(--success)"><b>答案：</b>${Array.isArray(q.answer)?q.answer.join(''):q.answer}</div>` : ''}
         `;
     }
 
-    async function handleFile(input) {
-        if(!curBank) return alert("请先选个题库");
-        const ab = await input.files[0].arrayBuffer();
-        mammoth.extractRawText({arrayBuffer:ab}).then(res => {
-            const lines = res.value.split('\n').filter(l => l.trim());
-            lines.forEach((l, i) => {
-                const m = l.match(/^(\d+)\.\s*\[(单选题|多选题|判断题|填空题)\]\s*(.*)/);
-                if(m) curBank.qs.push({id:Date.now()+i, type:m[2], question:m[3], options:[], answer:""});
-            });
-            db.transaction('banks', 'readwrite').objectStore('banks').put(curBank).onsuccess = () => switchBank(curBank.id);
-        });
+    function handleAns(l) {
+        const q = pool[idx]; if (q.uAns) return;
+        q.uAns = l;
+        const isR = Array.isArray(q.answer) ? (JSON.stringify(l) === JSON.stringify(q.answer)) : (l === q.answer);
+        if (!isR && !curBank.wrongs.includes(q.id)) curBank.wrongs.push(q.id);
+        else if (isR && isMistake) curBank.wrongs = curBank.wrongs.filter(id => id !== q.id);
+        
+        db.transaction('banks', 'readwrite').objectStore('banks').put(curBank);
+        renderQuiz();
+        document.getElementById('w-count').innerText = curBank.wrongs.length;
     }
 
-    function addBank() { const n = prompt("名字:"); if(n) db.transaction('banks','readwrite').objectStore('banks').add({name:n, qs:[], wrongs:[]}).onsuccess = refreshList; }
-    function move(s) { if(pool[idx+s]) { idx+=s; render(); } }
-    function clearAllData() { if(confirm("清除所有本地题库？")) { indexedDB.deleteDatabase('QuizProSystem'); localStorage.clear(); location.reload(true); } }
+    // 导入解析 (Txt/Json)
+    async function importData(input) {
+        if (!curBank) return alert("请先选个题库");
+        const file = input.files[0]; if (!file) return;
+        const text = await file.text();
+        let newQs = [];
 
-    /* --- 核心：彻底卸载 Service Worker 逻辑 --- */
+        if (file.name.endsWith('.json') || file.name.endsWith('.js')) {
+            try { newQs = JSON.parse(text); } catch(e) { alert("JSON 格式错误"); }
+        } else {
+            // Txt 解析逻辑
+            const lines = text.split('\n').filter(l => l.trim());
+            let cur = null;
+            lines.forEach((l, i) => {
+                const mQ = l.match(/^(\d+)\.\s*\[(单选题|多选题|判断题|填空题)\]\s*(.*)/);
+                if (mQ) {
+                    cur = { id: Date.now()+i, type: {"单选题":"single","多选题":"multi","判断题":"judge"}[mQ[2]] || "single", question: mQ[3], options: [], answer: "" };
+                    newQs.push(cur);
+                } else if (cur) {
+                    const mO = l.match(/^([A-F])\.\s*(.*)/);
+                    if (mO) cur.options.push({ label: mO[1], content: mO[2] });
+                    const mA = l.match(/^正确答案[：:]\s*(.*)/);
+                    if (mA) cur.answer = cur.type === 'multi' ? mA[1].trim().split('') : mA[1].trim();
+                }
+            });
+        }
+        curBank.qs = [...curBank.qs, ...newQs];
+        db.transaction('banks', 'readwrite').objectStore('banks').put(curBank).onsuccess = () => loadBank(curBank.id);
+    }
+
+    function move(s) { if(pool[idx+s]) { idx+=s; renderQuiz(); } }
+    function createBank() { const n = prompt("题库名称:"); if(n) db.transaction('banks','readwrite').objectStore('banks').add({name:n, qs:[], wrongs:[]}).onsuccess = renderBanks; }
+    function deleteBank(e, id) { e.stopPropagation(); if(confirm("确定删除？")) db.transaction('banks','readwrite').objectStore('banks').delete(id).onsuccess = renderBanks; }
+    function doSearch() { keyword = document.getElementById('search').value; updatePool(); }
+    function toggleMistake() { isMistake = !isMistake; document.getElementById('mistake-btn').classList.toggle('btn-primary', isMistake); updatePool(); }
+    function togglePanel() { document.body.classList.toggle('panel-on'); }
+    function toggleTheme() { document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'); }
+    function resetEverything() { if(confirm("清除所有数据并重启？")) { indexedDB.deleteDatabase('QuizProSystem'); localStorage.clear(); location.reload(); } }
+
+    /* --- 核心：彻底卸载旧版本的 Service Worker --- */
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(regs => {
-            for(let r of regs) r.unregister().then(() => console.log("已强力卸载旧缓存控制器"));
+            for(let r of regs) r.unregister();
         });
     }
 </script>
