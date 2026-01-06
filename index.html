@@ -1,361 +1,137 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="light">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>智学题库 PRO - 稳定同步版</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>智学题库 V2026.01.05.1830</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon.png">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
 
     <style>
-        :root {
-            --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #3b82f6;
-            --success: #10b981; --error: #ef4444; --border: #e2e8f0; --subtext: #64748b;
-        }
-        [data-theme="dark"] {
-            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --primary: #60a5fa;
-            --success: #34d399; --error: #fb7185; --border: #334155; --subtext: #94a3b8;
-        }
-        * { box-sizing: border-box; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; min-height: 100vh; }
-        
-        /* 版本与同步提示 */
-        .sync-banner { background: #1e293b; color: #94a3b8; font-size: 10px; text-align: center; padding: 2px; }
-
-        /* 导航栏 */
-        .nav { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .nav-title { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.5px; }
-
-        /* 主容器 */
-        .container { max-width: 700px; margin: 0 auto; padding: 15px; padding-bottom: 100px; }
-        
-        /* 搜索与分类 */
-        .search-input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); margin-bottom: 12px; outline: none; }
-        .tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scrollbar-width: none; }
-        .tab { white-space: nowrap; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); font-size: 13px; cursor: pointer; background: var(--card); }
-        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* 题目卡片 */
-        .card { background: var(--card); padding: 24px; border-radius: 18px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); position: relative; }
-        .q-meta { font-size: 12px; color: var(--subtext); margin-bottom: 10px; display: flex; justify-content: space-between; }
-        .q-text { font-size: 18px; font-weight: 700; line-height: 1.6; margin-bottom: 20px; }
-
-        /* 选项样式 */
-        .option { display: flex; align-items: center; padding: 14px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 10px; cursor: pointer; }
-        .option:hover { border-color: var(--primary); }
-        .option.selected { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
-        .option.correct { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.05); }
-        .option.error { border-color: var(--error); color: var(--error); background: rgba(239, 68, 68, 0.05); }
-        .opt-key { width: 24px; height: 24px; border-radius: 6px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; margin-right: 12px; border: 1px solid var(--border); }
-
-        .analysis { margin-top: 20px; padding: 15px; background: var(--bg); border-radius: 12px; display: none; border-left: 4px solid var(--primary); font-size: 14px; }
-        .show { display: block; }
-
-        /* 管理面板 */
-        #mg-panel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 100%; max-width: 320px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; z-index: 200; box-shadow: -5px 0 20px rgba(0,0,0,0.1); overflow-y: auto; }
-        .panel-on #mg-panel { display: block; }
-        
-        .btn { padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 13px; background: var(--primary); color: white; }
-        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
-        .btn-danger { background: var(--error); color: white; }
-
-        /* 底部控制 */
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 15px; z-index: 50; }
+        :root { --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --primary: #3b82f6; --border: #e2e8f0; }
+        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --border: #334155; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 80px; }
+        .sync-check { background: #ef4444; color: white; font-size: 10px; text-align: center; padding: 4px; font-weight: bold; }
+        .nav { display: flex; justify-content: space-between; padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
+        .card { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+        .option { padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-top: 10px; cursor: pointer; }
+        #mg-panel { display: none; position: fixed; right: 0; top: 0; bottom: 0; width: 300px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; z-index: 200; box-shadow: -2px 0 10px rgba(0,0,0,0.1); }
+        .panel-open #mg-panel { display: block; }
+        .btn { padding: 8px 16px; border-radius: 6px; border: none; background: var(--primary); color: white; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
     </style>
 </head>
 <body>
 
-<div class="sync-banner">
-    代码版本：2026.01.05.1700 | 实时加载模式 (无缓存干扰)
+<div class="sync-check">
+    当前运行版本：2026-01-05 18:30 | 实时模式
 </div>
 
 <div class="nav">
-    <div class="nav-title" onclick="location.reload()">智学题库 PRO</div>
-    <div style="display: flex; gap: 12px; align-items: center;">
-        <span onclick="toggleTheme()" style="cursor:pointer; font-size: 20px;">🌓</span>
-        <button class="btn btn-ghost" onclick="togglePanel()">管理</button>
-    </div>
+    <b onclick="location.reload(true)">智学题库 PRO</b>
+    <button class="btn" onclick="document.body.classList.toggle('panel-open')">管理</button>
 </div>
 
 <div id="mg-panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="margin:0">题库管理</h3>
-        <button class="btn btn-ghost" onclick="togglePanel()">关闭</button>
-    </div>
-    
-    <button class="btn" style="width:100%; margin-bottom:15px" onclick="addBank()">+ 新建题库</button>
-    <div id="bank-list"></div>
-    
-    <hr style="border:0; border-top:1px solid var(--border); margin:20px 0;">
-    
-    <h4>📥 导入 Docx/Txt</h4>
-    <input type="file" id="file-up" accept=".docx,.txt" style="display:none" onchange="importFile(this)">
-    <button class="btn btn-ghost" style="width:100%" onclick="document.getElementById('file-up').click()">选择文件导入</button>
-    
-    <div id="batch-section" style="margin-top:20px; display:none">
-        <h4>批量管理题目</h4>
-        <button class="btn btn-danger" style="width:100%" onclick="doBatchDel()">删除选中题目</button>
-        <div id="q-list-mini" style="max-height:180px; overflow-y:auto; font-size:11px; margin-top:10px; border:1px solid var(--border); border-radius:8px; padding:5px;"></div>
-    </div>
+    <h3>题库管理</h3>
+    <button class="btn" style="width:100%" onclick="addBank()">+ 新建题库</button>
+    <div id="b-list" style="margin: 15px 0;"></div>
+    <input type="file" id="up" accept=".docx" style="display:none" onchange="handleFile(this)">
+    <button class="btn" style="width:100%; background:#64748b" onclick="document.getElementById('up').click()">导入 Word (.docx)</button>
+    <br><br>
+    <button class="btn" style="width:100%; background:#ef4444" onclick="clearAllData()">⚠️ 重置所有数据</button>
 </div>
 
 <div class="container">
-    <input type="text" id="srch" class="search-input" placeholder="输入关键字搜索当前题库..." oninput="doSearch()">
-    
-    <div class="tabs">
-        <div class="tab active" onclick="setFilter('all')">全部</div>
-        <div class="tab" onclick="setFilter('single')">单选</div>
-        <div class="tab" onclick="setFilter('multi')">多选</div>
-        <div class="tab" onclick="setFilter('judge')">判断</div>
-        <div class="tab" onclick="setFilter('fill')">填空</div>
-        <div class="tab" id="mistake-tab" onclick="toggleMistake()" style="color:var(--error); font-weight:bold;">错题 (<span id="w-count">0</span>)</div>
-    </div>
-
-    <div class="card" id="quiz-card">
-        <div id="quiz-content">请在“管理”中新建一个题库，并导入 Docx 题目文件。</div>
-    </div>
+    <div class="card" id="q-box">请点击“管理”->“新建题库”并导入 Docx 文件</div>
 </div>
 
 <div class="footer">
-    <button class="btn btn-ghost" style="flex:1; max-width:120px" onclick="moveQ(-1)">上一题</button>
-    <button class="btn" style="flex:2; max-width:240px" onclick="moveQ(1)">下一题</button>
+    <button class="btn" style="background:#64748b" onclick="move(-1)">上一题</button>
+    <button class="btn" style="flex:1" onclick="move(1)">下一题</button>
 </div>
 
 <script>
-/* ==========================================
-   1. 数据库逻辑 (IndexedDB)
-   ========================================== */
-let db;
-const req = indexedDB.open('SmartQuizDB', 2);
-req.onupgradeneeded = e => {
-    const d = e.target.result;
-    if(!d.objectStoreNames.contains('banks')) d.createObjectStore('banks', {keyPath:'id', autoIncrement:true});
-};
-req.onsuccess = e => { db = e.target.result; initApp(); };
+    /* 核心功能实现 */
+    let db, curBank = null, pool = [], idx = 0;
+    const request = indexedDB.open('QuizProSystem', 3);
+    request.onupgradeneeded = e => { e.target.result.createObjectStore('banks', {keyPath:'id', autoIncrement:true}); };
+    request.onsuccess = e => { db = e.target.result; loadInitial(); };
 
-let curBank = null, pool = [], idx = 0, filter = 'all', keyword = '', mistakeMode = false;
-
-async function initApp() {
-    refreshBankUI();
-    const lastId = localStorage.getItem('active_bank_id');
-    if (lastId) loadBank(parseInt(lastId));
-}
-
-async function refreshBankUI() {
-    const tx = db.transaction('banks', 'readonly');
-    tx.objectStore('banks').getAll().onsuccess = e => {
-        const banks = e.target.result;
-        document.getElementById('bank-list').innerHTML = banks.map(b => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; cursor:pointer; background:${curBank?.id===b.id?'rgba(59,130,246,0.1)':'transparent'}" onclick="loadBank(${b.id})">
-                <span style="font-size:14px; font-weight:600;">${b.name} (${b.qs.length})</span>
-                <span style="color:var(--error); font-size:18px;" onclick="delBank(event, ${b.id})">🗑️</span>
-            </div>
-        `).join('');
-    };
-}
-
-function loadBank(id) {
-    db.transaction('banks', 'readonly').objectStore('banks').get(id).onsuccess = e => {
-        curBank = e.target.result;
-        if (!curBank) return;
-        localStorage.setItem('active_bank_id', id);
-        mistakeMode = false;
-        applyFilter();
-        refreshBankUI();
-        drawBatchUI();
-    };
-}
-
-/* ==========================================
-   2. 题目解析与过滤
-   ========================================== */
-function applyFilter() {
-    if (!curBank) return;
-    let base = mistakeMode ? curBank.qs.filter(q => curBank.wrongs.includes(q.id)) : curBank.qs;
-    if (filter !== 'all') base = base.filter(q => q.type === filter);
-    if (keyword) base = base.filter(q => q.question.toLowerCase().includes(keyword.toLowerCase()));
-    pool = base; idx = 0;
-    document.getElementById('w-count').innerText = curBank.wrongs.length;
-    renderQ();
-}
-
-function renderQ() {
-    const area = document.getElementById('quiz-content');
-    if (!pool.length) { 
-        area.innerHTML = `<center style="padding:40px; color:var(--subtext)">${mistakeMode?'错题本已清空！👏':'没找到相关题目'}</center>`; 
-        return; 
+    function loadInitial() {
+        refreshList();
+        const id = localStorage.getItem('last_id');
+        if (id) switchBank(parseInt(id));
     }
-    
-    const q = pool[idx], done = q.uAns !== undefined;
-    let opts = q.options || [];
-    // 判断题自动补全选项
-    if (q.type === 'judge' && !opts.length) opts = [{label:'A', content:'对'}, {label:'B', content:'错'}];
 
-    area.innerHTML = `
-        <div class="q-meta">
-            <span>${idx + 1} / ${pool.length} [${translateType(q.type)}]</span>
-            ${curBank.wrongs.includes(q.id) ? '<b style="color:var(--error)">[错题]</b>' : ''}
-        </div>
-        <div class="q-text">${highlight(q.question)}</div>
-        <div class="options-list">
-            ${q.type === 'fill' ? `<input type="text" class="search-input" id="fill-in" value="${q.uAns||''}" ${done?'disabled':''} placeholder="输入答案后按回车">` : 
-            opts.map((o, i) => {
-                let c = '';
-                if(done) {
-                    const isCorrect = Array.isArray(q.answer) ? q.answer.includes(o.label) : q.answer === o.label;
-                    const isSelected = Array.isArray(q.uAns) ? q.uAns.includes(o.label) : q.uAns === o.label;
-                    if(isCorrect) c = 'correct'; else if(isSelected) c = 'error';
-                } else if(q.tmp?.includes(o.label)) c = 'selected';
-                return `<div class="option ${c}" onclick="handleSelection('${o.label}')"><div class="opt-key">${i+1}</div>${o.content}</div>`;
-            }).join('')}
-        </div>
-        <div class="analysis ${done?'show':''}">
-            <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
-            <b>正确答案：</b> <span style="color:var(--success)">${Array.isArray(q.answer)?q.answer.join(''):q.answer}</span><br>
-            ${q.analysis || '暂无详细解析'}
-        </div>
-    `;
-}
-
-function handleSelection(label) {
-    const q = pool[idx]; if (q.uAns) return;
-    if (q.type === 'multi') {
-        if(!q.tmp) q.tmp = [];
-        const p = q.tmp.indexOf(label); p > -1 ? q.tmp.splice(p, 1) : q.tmp.push(label);
-        renderQ();
-    } else {
-        q.uAns = label; judgeQ(q); renderQ();
+    function refreshList() {
+        const tx = db.transaction('banks', 'readonly');
+        tx.objectStore('banks').getAll().onsuccess = e => {
+            document.getElementById('b-list').innerHTML = e.target.result.map(b => `
+                <div style="padding:8px; border:1px solid var(--border); margin-top:5px; border-radius:5px; cursor:pointer;" onclick="switchBank(${b.id})">
+                    ${b.name} (${b.qs.length})
+                </div>
+            `).join('');
+        };
     }
-}
 
-function judgeQ(q) {
-    const isRight = Array.isArray(q.answer) ? 
-        (JSON.stringify(q.uAns.sort()) === JSON.stringify(q.answer.sort())) : 
-        (q.uAns === q.answer);
-    
-    if (!isRight) {
-        if(!curBank.wrongs.includes(q.id)) curBank.wrongs.push(q.id);
-    } else if (mistakeMode) {
-        curBank.wrongs = curBank.wrongs.filter(id => id !== q.id);
+    function switchBank(id) {
+        db.transaction('banks', 'readonly').objectStore('banks').get(id).onsuccess = e => {
+            curBank = e.target.result;
+            if(!curBank) return;
+            localStorage.setItem('last_id', id);
+            pool = curBank.qs; idx = 0;
+            render();
+            refreshList();
+        };
     }
-    const tx = db.transaction('banks', 'readwrite');
-    tx.objectStore('banks').put(curBank);
-    document.getElementById('w-count').innerText = curBank.wrongs.length;
-}
 
-/* ==========================================
-   3. 文件解析 (Mammoth)
-   ========================================== */
-async function importFile(input) {
-    if(!curBank) return alert("请先新建或选择一个题库");
-    const file = input.files[0]; if(!file) return;
-    let txt = "";
-    if (file.name.endsWith('.docx')) {
-        const ab = await file.arrayBuffer();
-        const res = await mammoth.extractRawText({ arrayBuffer: ab });
-        txt = res.value;
-    } else { txt = await file.text(); }
-    
-    const newQs = parseContent(txt);
-    curBank.qs = [...curBank.qs, ...newQs];
-    const tx = db.transaction('banks', 'readwrite');
-    tx.objectStore('banks').put(curBank).onsuccess = () => { loadBank(curBank.id); alert(`成功导入 ${newQs.length} 道题目！`); };
-}
+    function render() {
+        const box = document.getElementById('q-box');
+        if(!pool.length) return;
+        const q = pool[idx];
+        let opts = q.options || [];
+        if(q.type === 'judge' && !opts.length) opts = [{label:'A', content:'对'}, {label:'B', content:'错'}]; //
 
-function parseContent(t) {
-    const res = [];
-    const lines = t.split('\n').map(l => l.trim()).filter(l => l);
-    let cur = null;
-    const typeMap = {"单选题":"single", "多选题":"multi", "判断题":"judge", "填空题":"fill"};
-    
-    lines.forEach((l, i) => {
-        const mQ = l.match(/^(\d+)\.\s*\[(单选题|多选题|判断题|填空题)\]\s*(.*)/);
-        if (mQ) {
-            cur = { id: Date.now() + i, type: typeMap[mQ[2]]||"single", question: mQ[3], options: [], answer: "" };
-            res.push(cur);
-        } else if (cur) {
-            const mO = l.match(/^([A-F])\.\s*(.*)/);
-            if (mO) cur.options.push({ label: mO[1], content: mO[2] });
-            const mA = l.match(/^正确答案[：:]\s*(.*)/);
-            if (mA) cur.answer = cur.type === 'multi' ? mA[1].trim().split('') : mA[1].trim();
-        }
-    });
-    return res;
-}
-
-/* ==========================================
-   4. 交互功能
-   ========================================== */
-function moveQ(step) { if(pool[idx+step]) { idx += step; renderQ(); } }
-function addBank() { const n = prompt("输入题库名称:"); if(n) db.transaction('banks','readwrite').objectStore('banks').add({name:n, qs:[], wrongs:[]}).onsuccess = refreshBankUI; }
-function delBank(e, id) { e.stopPropagation(); if(confirm("确定删除该题库及所有记录吗？")) db.transaction('banks','readwrite').objectStore('banks').delete(id).onsuccess = refreshBankUI; }
-function setFilter(t) { filter = t; document.querySelectorAll('.tab').forEach(el => el.classList.toggle('active', el.innerText.includes(t)|| (t==='all'&&el.innerText==='全部'))); applyFilter(); }
-function toggleMistake() { mistakeMode = !mistakeMode; document.getElementById('mistake-tab').classList.toggle('active', mistakeMode); applyFilter(); }
-function doSearch() { keyword = document.getElementById('srch').value; applyFilter(); }
-function togglePanel() { document.body.classList.toggle('panel-on'); }
-function toggleTheme() { document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'); }
-function translateType(t) { return {single:'单选', multi:'多选', judge:'判断', fill:'填空'}[t]; }
-function highlight(t) { if(!keyword) return t; return t.replace(new RegExp(`(${keyword})`, 'gi'), '<mark style="background:#fde047; color:#000;">$1</mark>'); }
-
-// 键盘映射
-window.onkeydown = e => {
-    const q = pool[idx]; if(!q) return;
-    if (e.key >= '1' && e.key <= '4' && q.type !== 'fill') handleSelection(['A','B','C','D'][e.key-1]);
-    if (e.key === 'ArrowLeft') moveQ(-1);
-    if (e.key === 'ArrowRight') moveQ(1);
-    if (e.key === 'Enter') {
-        if (q.type === 'fill' && !q.uAns) { const v = document.getElementById('fill-in').value.trim(); if(v){q.uAns=v; judgeQ(q); renderQ();} }
-        else if (q.type === 'multi' && !q.uAns && q.tmp?.length) { q.uAns = q.tmp; judgeQ(q); renderQ(); }
-        else if (q.uAns) moveQ(1);
+        box.innerHTML = `
+            <div style="font-size:12px; color:#64748b">${idx+1}/${pool.length} | ${q.type}</div>
+            <div style="font-size:18px; font-weight:bold; margin-top:10px">${q.question}</div>
+            <div style="margin-top:15px">${opts.map(o => `<div class="option" onclick="alert('答案是：'+'${q.answer}')">${o.label}. ${o.content}</div>`).join('')}</div>
+        `;
     }
-};
 
-// 批量管理
-function drawBatchUI() {
-    const b = document.getElementById('batch-section');
-    const c = document.getElementById('q-list-mini');
-    if(!curBank) { b.style.display = 'none'; return; }
-    b.style.display = 'block';
-    c.innerHTML = curBank.qs.map(q => `
-        <div style="display:flex; gap:5px; margin-bottom:4px;">
-            <input type="checkbox" class="qb" value="${q.id}">
-            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${q.question}</span>
-        </div>
-    `).join('');
-}
-function doBatchDel() {
-    const ids = Array.from(document.querySelectorAll('.qb:checked')).map(i => parseInt(i.value));
-    if(!ids.length) return;
-    if(confirm(`确定删除选中的 ${ids.length} 道题目吗？`)) {
-        curBank.qs = curBank.qs.filter(q => !ids.includes(q.id));
-        curBank.wrongs = curBank.wrongs.filter(id => !ids.includes(id));
-        const tx = db.transaction('banks', 'readwrite');
-        tx.objectStore('banks').put(curBank).onsuccess = () => loadBank(curBank.id);
+    async function handleFile(input) {
+        if(!curBank) return alert("请先选个题库");
+        const ab = await input.files[0].arrayBuffer();
+        mammoth.extractRawText({arrayBuffer:ab}).then(res => {
+            const lines = res.value.split('\n').filter(l => l.trim());
+            lines.forEach((l, i) => {
+                const m = l.match(/^(\d+)\.\s*\[(单选题|多选题|判断题|填空题)\]\s*(.*)/);
+                if(m) curBank.qs.push({id:Date.now()+i, type:m[2], question:m[3], options:[], answer:""});
+            });
+            db.transaction('banks', 'readwrite').objectStore('banks').put(curBank).onsuccess = () => switchBank(curBank.id);
+        });
     }
-}
 
-// ==========================================
-// 🚀 强制卸载 Service Worker (解决同步死穴)
-// ==========================================
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-            registration.unregister();
-            console.log('Service Worker 已强制卸载，确保加载最新代码');
-        }
-    });
-}
-// 清除缓存 API 中的数据
-if ('caches' in window) {
-    caches.keys().then(function(names) {
-        for (let name of names) caches.delete(name);
-    });
-}
+    function addBank() { const n = prompt("名字:"); if(n) db.transaction('banks','readwrite').objectStore('banks').add({name:n, qs:[], wrongs:[]}).onsuccess = refreshList; }
+    function move(s) { if(pool[idx+s]) { idx+=s; render(); } }
+    function clearAllData() { if(confirm("清除所有本地题库？")) { indexedDB.deleteDatabase('QuizProSystem'); localStorage.clear(); location.reload(true); } }
+
+    /* --- 核心：彻底卸载 Service Worker 逻辑 --- */
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            for(let r of regs) r.unregister().then(() => console.log("已强力卸载旧缓存控制器"));
+        });
+    }
 </script>
 </body>
 </html>
