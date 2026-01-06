@@ -1,12 +1,14 @@
-const CACHE_NAME = 'quiz-pro-v1.0.2'; // 与 index.html 保持一致
+// 强制更新标识：v1.0.3
+const CACHE_NAME = 'quiz-pro-v1.0.3'; 
 const ASSETS = [
     './',
     './index.html',
-    './manifest.json'
+    './manifest.json',
+    './icon.png' // 包含图标
 ];
 
 self.addEventListener('install', e => {
-    self.skipWaiting();
+    self.skipWaiting(); 
     e.waitUntil(
         caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
     );
